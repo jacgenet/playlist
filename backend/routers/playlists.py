@@ -110,10 +110,10 @@ async def import_xml_playlist(
     db: Session = Depends(get_db),
     current_admin: Admin = Depends(get_current_admin)
 ):
-    if not file.filename.endswith('.xml'):
+    if not (file.filename.endswith('.xml') or file.filename.endswith('.plist')):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="File must be an XML file"
+            detail="File must be an XML or plist file"
         )
     
     try:

@@ -62,7 +62,16 @@ function PlaylistEditor() {
         await axios.put(`/api/playlists/${id}`, playlist);
       }
     } catch (error) {
-      setError(error.response?.data?.detail || 'Failed to save playlist');
+      console.error('Save error:', error.response?.data);
+      const errorDetail = error.response?.data?.detail;
+      if (Array.isArray(errorDetail)) {
+        // Handle validation errors
+        setError(errorDetail.map(err => err.msg).join(', '));
+      } else if (typeof errorDetail === 'string') {
+        setError(errorDetail);
+      } else {
+        setError('Failed to save playlist');
+      }
     } finally {
       setSaving(false);
     }
@@ -79,7 +88,16 @@ function PlaylistEditor() {
       });
       setPlaylist(prev => ({ ...prev, is_published: !prev.is_published }));
     } catch (error) {
-      setError(error.response?.data?.detail || 'Failed to update playlist');
+      console.error('Publish error:', error.response?.data);
+      const errorDetail = error.response?.data?.detail;
+      if (Array.isArray(errorDetail)) {
+        // Handle validation errors
+        setError(errorDetail.map(err => err.msg).join(', '));
+      } else if (typeof errorDetail === 'string') {
+        setError(errorDetail);
+      } else {
+        setError('Failed to update playlist');
+      }
     } finally {
       setSaving(false);
     }
@@ -121,7 +139,9 @@ function PlaylistEditor() {
     onDrop,
     accept: {
       'text/xml': ['.xml'],
-      'application/xml': ['.xml']
+      'application/xml': ['.xml'],
+      'application/x-plist': ['.plist'],
+      'text/x-plist': ['.plist']
     },
     multiple: false
   });
@@ -253,10 +273,10 @@ function PlaylistEditor() {
         </div>
       </div>
 
-      {/* XML Import */}
+      {/* File Import */}
       <div className="card">
         <div className="card-header">
-          <h3 className="text-lg font-medium text-gray-900">Import from XML</h3>
+          <h3 className="text-lg font-medium text-gray-900">Import Playlist</h3>
         </div>
         <div className="card-body">
           <div
@@ -271,11 +291,11 @@ function PlaylistEditor() {
             <Upload className="mx-auto h-12 w-12 text-gray-400" />
             <p className="mt-2 text-sm text-gray-600">
               {isDragActive
-                ? 'Drop the XML file here...'
-                : 'Drag & drop an XML file here, or click to select'}
+                ? 'Drop the file here...'
+                : 'Drag & drop a playlist file here, or click to select'}
             </p>
             <p className="text-xs text-gray-500 mt-1">
-              Supports XML files from DJ software and playlist managers
+              Supports XML files from DJ software and iTunes Library files (.plist)
             </p>
           </div>
           {uploading && (

@@ -2,12 +2,18 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from typing import Dict, List, Any
 import re
+from itunes_parser import parse_itunes_library_xml, detect_itunes_library
 
 def parse_playlist_xml(xml_content: bytes) -> Dict[str, Any]:
     """
     Parse XML playlist file and extract playlist and track information.
     Supports common XML formats used by DJ software and playlist managers.
+    Also supports iTunes Library XML files.
     """
+    # Check if this is an iTunes library file
+    if detect_itunes_library(xml_content):
+        return parse_itunes_library_xml(xml_content)
+    
     try:
         root = ET.fromstring(xml_content)
     except ET.ParseError as e:
