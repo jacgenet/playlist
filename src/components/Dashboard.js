@@ -142,23 +142,23 @@ function Dashboard() {
               </div>
             </div>
           ) : (
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+            <div className="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3">
                       Playlist
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
                       Class Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">
                       Tracks
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">
                       Status
                     </th>
-                    <th className="relative px-6 py-3">
+                    <th className="relative px-6 py-3 w-1/6">
                       <span className="sr-only">Actions</span>
                     </th>
                   </tr>
@@ -166,13 +166,13 @@ function Dashboard() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {playlists.slice(0, 10).map((playlist) => (
                     <tr key={playlist.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
+                      <td className="px-6 py-4">
+                        <div className="max-w-xs">
+                          <div className="text-sm font-medium text-gray-900 truncate">
                             {playlist.title}
                           </div>
                           {playlist.description && (
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-500 truncate" title={playlist.description}>
                               {playlist.description}
                             </div>
                           )}

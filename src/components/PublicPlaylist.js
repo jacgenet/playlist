@@ -10,6 +10,10 @@ function PublicPlaylist() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    // Configure axios for this component
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    axios.defaults.baseURL = apiUrl;
+    
     fetchPlaylist();
   }, [id]);
 
@@ -18,6 +22,7 @@ function PublicPlaylist() {
       const response = await axios.get(`/api/playlists/public/${id}`);
       setPlaylist(response.data);
     } catch (error) {
+      console.error('Error fetching public playlist:', error);
       setError('Playlist not found or not published');
     } finally {
       setLoading(false);

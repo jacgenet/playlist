@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
+import Homepage from './components/Homepage';
 import Dashboard from './components/Dashboard';
 import Calendar from './components/Calendar';
 import PlaylistEditor from './components/PlaylistEditor';
@@ -32,6 +33,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/public/playlist/:id" element={<PublicPlaylist />} />
+            <Route path="/home" element={<Homepage />} />
             <Route path="/" element={
               <ProtectedRoute>
                 <Layout>

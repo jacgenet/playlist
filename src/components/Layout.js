@@ -26,10 +26,12 @@ function Layout({ children }) {
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <Music className="h-8 w-8 text-blue-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900">
-                  Spin Playlist Manager
-                </span>
+                <Link to="/home" className="flex items-center">
+                  <Music className="h-8 w-8 text-blue-600" />
+                  <span className="ml-2 text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
+                    Spin Playlist Manager
+                  </span>
+                </Link>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 {navigation.map((item) => {
