@@ -1,0 +1,30 @@
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Build the React app
+RUN npm run build
+
+# Install Python dependencies for backend
+RUN apk add --no-cache python3 py3-pip
+COPY backend/requirements.txt ./backend/
+RUN pip3 install -r backend/requirements.txt
+
+# Copy backend code
+COPY backend/ ./backend/
+
+# Expose port
+EXPOSE 3000
+
+# Start both frontend and backend
+CMD ["sh", "-c", "npm start & cd backend && uvicorn main:app --host 0.0.0.0 --port 8000"]
