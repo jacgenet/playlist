@@ -103,6 +103,38 @@ async def debug_admins():
     finally:
         db.close()
 
+# Emergency admin creation endpoint
+@app.post("/api/debug/create-admin")
+async def create_admin_emergency():
+    from sqlalchemy.orm import Session
+    from models import Admin
+    from auth import get_password_hash
+    
+    db = Session(bind=engine)
+    try:
+        # Check if admin already exists
+        existing_admin = db.query(Admin).filter(Admin.email == "admin@example.com").first()
+        if existing_admin:
+            return {"message": "Admin already exists", "admin_id": existing_admin.id}
+        
+        # Create admin with short password
+        password = "admin123"
+        hashed_password = get_password_hash(password)
+        
+        admin = Admin(
+            email="admin@example.com",
+            hashed_password=hashed_password
+        )
+        db.add(admin)
+        db.commit()
+        db.refresh(admin)
+        
+        return {"message": "Admin created successfully", "admin_id": admin.id, "email": admin.email}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        db.close()
+
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(playlists.router, prefix="/api/playlists", tags=["playlists"])
