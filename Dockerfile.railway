@@ -31,22 +31,18 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend code
-COPY backend/ ./
+# Copy application code
+COPY *.py ./
+COPY routers/ ./routers/
 
 # Copy built frontend
 COPY --from=frontend-build /app/build ./frontend/build
 
 # Set environment variables
 ENV PYTHONPATH=/app
-ENV DATABASE_URL=sqlite:///./spin_playlist.db
-ENV JWT_SECRET_KEY=your-secret-key-here
-ENV ADMIN_EMAIL=admin@example.com
-ENV ADMIN_PASSWORD=admin123
-ENV CORS_ORIGINS=*
 
-# Expose port
+# Expose port (documentation only, Railway ignores this)
 EXPOSE 8000
 
-# Start the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start the application with dynamic port
+CMD sh -c "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"
