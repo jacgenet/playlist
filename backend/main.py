@@ -33,6 +33,9 @@ def create_initial_admin():
         if not existing_admin:
             # Create initial admin
             admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
+            # Ensure password is not longer than 72 bytes for bcrypt
+            if len(admin_password.encode('utf-8')) > 72:
+                admin_password = admin_password[:72]
             hashed_password = get_password_hash(admin_password)
             
             admin = Admin(
@@ -41,11 +44,14 @@ def create_initial_admin():
             )
             db.add(admin)
             db.commit()
-            print(f"Created initial admin user: {admin_email}")
+            db.refresh(admin)
+            print(f"Created initial admin user: {admin_email} with ID: {admin.id}")
         else:
             print(f"Admin user already exists: {admin_email}")
     except Exception as e:
         print(f"Error creating admin user: {e}")
+        import traceback
+        traceback.print_exc()
     finally:
         db.close()
 
@@ -72,6 +78,30 @@ app.add_middleware(
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy", "message": "Spin Playlist Manager API is running"}
+
+# Debug endpoint to check admin users
+@app.get("/api/debug/admins")
+async def debug_admins():
+    from sqlalchemy.orm import Session
+    from models import Admin
+    
+    db = Session(bind=engine)
+    try:
+        admins = db.query(Admin).all()
+        admin_list = []
+        for admin in admins:
+            admin_list.append({
+                "id": admin.id,
+                "email": admin.email,
+                "has_password": bool(admin.hashed_password),
+                "is_active": admin.is_active,
+                "created_at": admin.created_at.isoformat() if admin.created_at else None
+            })
+        return {"admins": admin_list, "count": len(admin_list)}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        db.close()
 
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
