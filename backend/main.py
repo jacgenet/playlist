@@ -31,11 +31,9 @@ def create_initial_admin():
         existing_admin = get_admin_by_email(db, admin_email)
         
         if not existing_admin:
-            # Create initial admin
-            admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
-            # Ensure password is not longer than 72 bytes for bcrypt
-            if len(admin_password.encode('utf-8')) > 72:
-                admin_password = admin_password[:72]
+            # Create initial admin with very short password to avoid bcrypt issues
+            admin_password = os.getenv("ADMIN_PASSWORD", "admin")
+            print(f"Creating admin with password length: {len(admin_password.encode('utf-8'))} bytes")
             hashed_password = get_password_hash(admin_password)
             
             admin = Admin(
@@ -117,8 +115,9 @@ async def create_admin_emergency():
         if existing_admin:
             return {"message": "Admin already exists", "admin_id": existing_admin.id}
         
-        # Create admin with short password
-        password = "admin123"
+        # Create admin with very short password
+        password = "admin"
+        print(f"Emergency admin creation with password length: {len(password.encode('utf-8'))} bytes")
         hashed_password = get_password_hash(password)
         
         admin = Admin(
