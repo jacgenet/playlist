@@ -34,13 +34,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Health check endpoint FIRST (before catch-all route)
+@app.get("/api/health")
+async def health_check():
+    return {"status": "healthy", "message": "Spin Playlist Manager API is running"}
+
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(playlists.router, prefix="/api/playlists", tags=["playlists"])
 app.include_router(tracks.router, prefix="/api/tracks", tags=["tracks"])
 app.include_router(calendar.router, prefix="/api/calendar", tags=["calendar"])
 
-# Serve static files (React build)
+# Serve static files (React build) - LAST to avoid intercepting API routes
 if os.path.exists("./frontend/build"):
     app.mount("/static", StaticFiles(directory="./frontend/build/static"), name="static")
     
@@ -51,10 +56,6 @@ if os.path.exists("./frontend/build"):
             return FileResponse("./frontend/build/index.html")
         else:
             raise HTTPException(status_code=404, detail="Not found")
-
-@app.get("/api/health")
-async def health_check():
-    return {"status": "healthy", "message": "Spin Playlist Manager API is running"}
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
