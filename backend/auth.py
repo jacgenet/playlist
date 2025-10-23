@@ -41,11 +41,21 @@ def get_admin_by_email(db: Session, email: str) -> Optional[Admin]:
     return db.query(Admin).filter(Admin.email == email).first()
 
 def authenticate_admin(db: Session, email: str, password: str) -> Optional[Admin]:
+    print(f"Authenticating admin: {email}")
     admin = get_admin_by_email(db, email)
     if not admin:
+        print(f"No admin found with email: {email}")
         return None
-    if not verify_password(password, admin.hashed_password):
+    
+    print(f"Admin found, verifying password...")
+    password_valid = verify_password(password, admin.hashed_password)
+    print(f"Password valid: {password_valid}")
+    
+    if not password_valid:
+        print(f"Password verification failed for: {email}")
         return None
+    
+    print(f"Authentication successful for: {email}")
     return admin
 
 async def get_current_admin(

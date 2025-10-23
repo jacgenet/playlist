@@ -39,8 +39,19 @@ async def register_admin(admin_data: AdminCreate, db: Session = Depends(get_db))
 
 @router.post("/login", response_model=Token)
 async def login_admin(admin_data: AdminLogin, db: Session = Depends(get_db)):
+    print(f"Login attempt for email: {admin_data.email}")
+    
+    # Check if admin exists
+    admin = get_admin_by_email(db, admin_data.email)
+    print(f"Admin found: {admin is not None}")
+    
+    if admin:
+        print(f"Admin email: {admin.email}")
+        print(f"Admin hashed password exists: {bool(admin.hashed_password)}")
+    
     admin = authenticate_admin(db, admin_data.email, admin_data.password)
     if not admin:
+        print(f"Authentication failed for {admin_data.email}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
