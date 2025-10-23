@@ -25,8 +25,11 @@ export function AuthProvider({ children }) {
     }
     
     // Set base URL for API calls
-    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-    console.log('API URL:', apiUrl); // Debug log
+    // In production (Railway), the frontend is served by the same backend, so use relative URLs
+    // In development, use the explicit localhost URL
+    const isProduction = window.location.hostname !== 'localhost';
+    const apiUrl = isProduction ? '' : (process.env.REACT_APP_API_URL || 'http://localhost:8000');
+    console.log('API URL:', apiUrl, 'isProduction:', isProduction); // Debug log
     axios.defaults.baseURL = apiUrl;
   }, []);
 

@@ -11,7 +11,10 @@ function PublicPlaylist() {
 
   useEffect(() => {
     // Configure axios for this component
-    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    // In production (Railway), the frontend is served by the same backend, so use relative URLs
+    // In development, use the explicit localhost URL
+    const isProduction = window.location.hostname !== 'localhost';
+    const apiUrl = isProduction ? '' : (process.env.REACT_APP_API_URL || 'http://localhost:8000');
     axios.defaults.baseURL = apiUrl;
     
     fetchPlaylist();
