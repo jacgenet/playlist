@@ -31,8 +31,11 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all Python code (this gets everything)
-COPY . ./
+# Copy backend code from backend folder
+COPY backend/ ./
+
+# Debug: Check what files were copied
+RUN echo "Files in /app:" && ls -la /app/ && echo "Checking for main.py:" && ls -la /app/main.py || echo "main.py NOT FOUND!"
 
 # Copy built frontend (overwrite if needed)
 COPY --from=frontend-build /app/build ./frontend/build
