@@ -31,11 +31,10 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY *.py ./
-COPY routers/ ./routers/
+# Copy all Python code (this gets everything)
+COPY . ./
 
-# Copy built frontend
+# Copy built frontend (overwrite if needed)
 COPY --from=frontend-build /app/build ./frontend/build
 
 # Set environment variables
