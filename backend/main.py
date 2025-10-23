@@ -18,6 +18,40 @@ load_dotenv()
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
+# Create initial admin user if it doesn't exist
+def create_initial_admin():
+    from sqlalchemy.orm import Session
+    from models import Admin
+    from auth import get_password_hash, get_admin_by_email
+    
+    db = Session(bind=engine)
+    try:
+        # Check if admin already exists
+        admin_email = os.getenv("ADMIN_EMAIL", "admin@example.com")
+        existing_admin = get_admin_by_email(db, admin_email)
+        
+        if not existing_admin:
+            # Create initial admin
+            admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
+            hashed_password = get_password_hash(admin_password)
+            
+            admin = Admin(
+                email=admin_email,
+                hashed_password=hashed_password
+            )
+            db.add(admin)
+            db.commit()
+            print(f"Created initial admin user: {admin_email}")
+        else:
+            print(f"Admin user already exists: {admin_email}")
+    except Exception as e:
+        print(f"Error creating admin user: {e}")
+    finally:
+        db.close()
+
+# Create initial admin user
+create_initial_admin()
+
 app = FastAPI(
     title="Spin Playlist Manager",
     description="Calendar-first playlist publishing for spin instructors",
@@ -25,7 +59,7 @@ app = FastAPI(
 )
 
 # CORS middleware
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:3001").split(",")
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:3001,https://playlist-production-3535.up.railway.app").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
