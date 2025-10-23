@@ -40,16 +40,8 @@ COPY --from=frontend-build /app/build ./frontend/build
 # Create a simple HTTP server for frontend
 RUN pip install gunicorn
 
-# Create startup script
-RUN echo '#!/bin/bash\n\
-cd /app/backend\n\
-uvicorn main:app --host 0.0.0.0 --port $PORT &\n\
-cd /app/frontend\n\
-python -m http.server 3000 &\n\
-wait' > /app/start.sh && chmod +x /app/start.sh
-
 # Expose port
-EXPOSE $PORT
+EXPOSE 8000
 
 # Start the application
-CMD ["/app/start.sh"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
