@@ -23,9 +23,9 @@ function Login() {
     console.log('Login result:', result); // Debug log
     
     if (result.success) {
-      console.log('Login successful! Redirecting...'); // Debug log
-      // Navigate to dashboard
-      navigate('/');
+      console.log('Login successful! Redirecting to homepage...'); // Debug log
+      // Navigate to homepage
+      navigate('/home');
     } else {
       setError(result.error);
     }

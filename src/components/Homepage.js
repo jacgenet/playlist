@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Calendar, Music, Clock } from 'lucide-react';
+import { Calendar, Music, Clock, BarChart3, Plus } from 'lucide-react';
 
 function Homepage() {
   const [playlists, setPlaylists] = useState([]);
@@ -78,6 +78,31 @@ function Homepage() {
       <div className="px-6 py-8">
         <h1 className="text-4xl font-bold mb-2">Welcome to Spin Playlist Manager</h1>
         <p className="text-gray-400 text-lg">Discover and enjoy curated spin playlists</p>
+        
+        {/* Navigation Links */}
+        <div className="mt-6 flex flex-wrap gap-4">
+          <button
+            onClick={() => navigate('/calendar')}
+            className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+          >
+            <Calendar className="h-5 w-5 mr-2" />
+            Calendar
+          </button>
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+          >
+            <BarChart3 className="h-5 w-5 mr-2" />
+            Dashboard
+          </button>
+          <button
+            onClick={() => navigate('/playlist/new')}
+            className="flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            New Playlist
+          </button>
+        </div>
       </div>
 
       {/* Playlist Grid */}
